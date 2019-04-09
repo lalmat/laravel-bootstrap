@@ -18,7 +18,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        if (\Auth::user()->administrator) {
+            return User::all();
+        }
     }
 
     /**
@@ -40,7 +42,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        return User::find($id);
     }
 
     /**
@@ -63,7 +65,14 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $result = false;
+        $u = User::find($id);
+
+        if ($user->can('destroy',$u)) {
+            $result = $u->destroy();
+        }
+
+        return $result;
     }
 
     public function me() {
