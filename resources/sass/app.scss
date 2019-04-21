@@ -1,19 +1,21 @@
-
 // Fonts
 /* @import url('https://fonts.googleapis.com/css?family=Nunito'); */
 
 // Variables
-@import 'variables';
+@import "variables";
 
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
+//@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap-vue/src/index.scss";
 
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;

@@ -1,41 +1,50 @@
 <template>
   <div>
-    <el-menu>
-      <el-submenu v-for="(section, section_index) in menus"
-        :key="section_index"
-        :index="section_index.toString()">
-        <template slot="title">
-          <i class="material-icons">{{ section.icon }}</i>
-          <span>{{section.title}}</span>
-        </template>
-        <el-menu-item v-for="(item, item_index) in section.childs"
-          :key="item_index"
-          :index="section_index+'-'+item_index">
+    <div class="p-3 text-center text-uppercase">Laravel Application</div>
+    <div class="row">
+      <div class="col">
+        <i class="material-icons align-bottom">account_circle</i>
+        {{me.name}}
+      </div>
+      <div class="col-3 text-center">
+        <i class="material-icons align-bottom">power_settings_new</i>
+      </div>
+    </div>
+    <hr>
+
+    <div
+      v-for="(section, section_index) in menus"
+      :key="section_index"
+      :index="section_index.toString()"
+    >
+      {{section.title}}
+      <ul>
+        <li v-for="(item, item_index) in section.childs" :key="item_index">
           <router-link :to="item.route">{{item.title}}</router-link>
-        </el-menu-item>
-      </el-submenu>
-    </el-menu>
+        </li>
+      </ul>
+      <hr>
+    </div>
   </div>
 </template>
+
 <script>
-  import {mapState} from 'vuex';
-  import menuAdmin from './views/admin/menu.js';
+import { mapState } from "vuex";
+import menuAdmin from "./views/admin/menu.js";
 
-  export default {
+export default {
+  data() {
+    return {};
+  },
 
-    data() {
-      return {};
-    },
+  computed: {
+    ...mapState("users", ["me"]),
 
-    computed: {
-      ...mapState(['user']),
-
-      menus() {
-        let menus = [];
-        if (this.user.administrator) menus.push(menuAdmin);
-        return menus;
-      }
+    menus() {
+      let menus = [];
+      if (this.me.administrator) menus.push(menuAdmin);
+      return menus;
     }
-
   }
+};
 </script>
