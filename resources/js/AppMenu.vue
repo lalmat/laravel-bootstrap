@@ -7,7 +7,9 @@
         {{me.name}}
       </div>
       <div class="col-3 text-center">
-        <i class="material-icons align-bottom">power_settings_new</i>
+        <a href="#" @click="logout()">
+          <i class="material-icons align-bottom">power_settings_new</i>
+        </a>
       </div>
     </div>
     <hr>
@@ -44,6 +46,12 @@ export default {
       let menus = [];
       if (this.me.administrator) menus.push(menuAdmin);
       return menus;
+    }
+  },
+
+  methods: {
+    logout() {
+      this.$store.dispatch("logout");
     }
   }
 };

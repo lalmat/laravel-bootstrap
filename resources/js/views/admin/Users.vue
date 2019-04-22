@@ -19,7 +19,8 @@
           <th>#</th>
           <th>Name</th>
           <th>E-mail</th>
-          <th>Creation</th>
+          <th>Administrator</th>
+          <th>Modified At</th>
           <th class="text-center">Actions</th>
         </tr>
       </thead>
@@ -30,6 +31,7 @@
           <b v-if="u.id == me.id">*You*</b>
         </td>
         <td>{{u.email}}</td>
+        <td>{{u.administrator}}</td>
         <td>{{u.created_at}}</td>
         <td class="text-center">
           <div class="btn-group" role="group" :aria-label="`${u.name} actions`">
@@ -62,6 +64,7 @@
   </div>
 </template>
 <script>
+import appApi from "../../api/app.js";
 import userForm from "./UserForm.vue";
 import { mapState } from "vuex";
 export default {
@@ -71,6 +74,7 @@ export default {
         id: null,
         name: null,
         email: null,
+        administrator: false,
         password: null,
         password_verification: null
       },
@@ -86,6 +90,7 @@ export default {
   },
   methods: {
     formOpen(id = null) {
+      this.error = "";
       if (id) this.load(id);
       $("#userForm").modal("show");
     },
@@ -95,15 +100,19 @@ export default {
     },
 
     save() {
-      this.$store
-        .dispatch("users/save", this.user)
-        .then(r => {
-          $("userForm").modal("hide");
-        })
-        .catch(e => {
-          console.log("error", e);
-          this.error = e.data.message;
-        });
+      if (this.user.password != this.user.password_verification) {
+        this.error = "Password do not match";
+      } else {
+        this.$store
+          .dispatch("users/save", this.user)
+          .then(r => {
+            $("#userForm").modal("hide");
+          })
+          .catch(e => {
+            console.log("error", e);
+            this.error = e.data.message;
+          });
+      }
     },
 
     drop(id) {

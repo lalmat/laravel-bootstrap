@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Access\AuthorizationException;
+
 use App\User;
+
 class UserController extends Controller
 {
 
@@ -19,9 +23,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        if (\Auth::user()->administrator) {
-            return User::all();
-        }
+        if (Auth::user()->cant('list', User::class))
+            throw new AuthorizationException("Access denied");
+
+        return User::all();
     }
 
     /**
@@ -32,12 +37,16 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $u = new User;
-        $u->name = $request->name;
-        $u->email = $request->email;
-        $u->password = Hash::make($request->password);
-        $u->save();
-        return $u;
+        if (Auth::user()->can('create', User::class)) {
+          $u = new User;
+          $u->name          = $request->name;
+          $u->email         = $request->email;
+          $u->administrator = $request->administrator;
+          $u->active        = $request->active;
+          $u->password      = Hash::make($request->password);
+          $u->save();
+          return $u;
+        }
     }
 
     /**
@@ -48,7 +57,10 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return User::find($id);
+        $u = User::find($id);
+        if (Auth::user()->can('view', $u)) {
+          return $u;
+        }
     }
 
     /**
@@ -60,7 +72,26 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $u = User::find($id);
+        $logged = Auth::user();
 
+        if ($u && $logged->can('update', $u)) {
+            $u->name          = $request->name;
+            $u->email         = $request->email;
+
+            if ($logged->id != $u->id && $logged->administrator) {
+              $u->administrator = $request->administrator;
+              $u->active        = $request->active;
+            }
+
+            if ($request->password != '') {
+              $u->password = Hash::make($request->password);
+            }
+
+            $rs = $u->save();
+            return "{'success':'".($rs ? "true" : "false")."'}";
+        }
+        return "{'success':false, 'message':'unauthorized'}";
     }
 
     /**
@@ -71,17 +102,15 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $result = false;
         $u = User::find($id);
-
-        if ($user->can('destroy',$u)) {
-            $result = $u->destroy();
+        if ($u && Auth::user()->can('delete', $u)) {
+            $rs = $u->delete();
+            return "{'success':'".($rs ? "true" : "false")."'}";
         }
-
-        return $result;
+        return "{'success':false, 'message':'unauthorized'}";
     }
 
     public function me() {
-        return \Auth::user()->with('rights')->first();
+        return User::with('rights')->where('id', Auth::id())->first();
     }
 }

@@ -4,7 +4,7 @@ export default {
   users: usersApi,
 
   logout() {
-    apiCall("/logout").finally(() => {
+    apiCall("POST", "/logout").finally(() => {
       window.location.href = "/login";
     });
   }

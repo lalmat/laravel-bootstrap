@@ -23,6 +23,17 @@ export function apiCall(method, action, data = null) {
           .then(r => resolve(r.data))
           .catch(e => reject(e.response));
         break;
+      case "DELETE":
+        Axios.delete(action)
+          .then(r => resolve(r.data))
+          .catch(e => reject(e.response));
+        break;
+      case "PATCH":
+      case "PUT":
+        Axios.patch(action, data)
+          .then(r => resolve(r.data))
+          .catch(e => reject(e.response));
+        break;
       default:
         reject("Unkown method");
     }

@@ -10,7 +10,7 @@
       <div class="modal-body">
         <form>
           <div class="form-group">
-            <label for="userForm_name">Name</label>
+            <label for="userForm_name">Name :</label>
             <input
               type="text"
               class="form-control"
@@ -23,9 +23,9 @@
           </div>
 
           <div class="form-group">
-            <label for="userForm_email">E-mail address</label>
+            <label for="userForm_email">E-mail address :</label>
             <input
-              type="text"
+              type="email"
               class="form-control"
               id="userForm_email"
               aria-describedby="userForm_emailHelp"
@@ -39,7 +39,7 @@
           </div>
 
           <div class="form-group">
-            <label for="userForm_password">Password</label>
+            <label for="userForm_password">Password :</label>
             <input
               type="password"
               class="form-control"
@@ -54,6 +54,28 @@
               v-model="user.password_verification"
             >
           </div>
+
+          <div class="form-group">
+            <label>Administrative Flags :</label>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="userForm_administrator"
+                v-model="user.administrator"
+              >
+              <label class="form-check-label" for="userForm_administrator">Administrator</label>
+            </div>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="userForm_active"
+                v-model="user.active"
+              >
+              <label class="form-check-label" for="userForm_active">Active</label>
+            </div>
+          </div>
         </form>
         <div class="alert alert-danger" role="alert" v-if="error != ''">{{error}}</div>
       </div>
@@ -65,7 +87,6 @@
   </div>
 </template>
 <script>
-import appApi from "../../api/app.js";
 export default {
   props: ["user", "error"]
 };

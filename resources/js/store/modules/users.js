@@ -34,14 +34,14 @@ export default {
         appApi.users
           .save(item)
           .then(r => {
-            dispatch("load_all").then(() => resolve(r));
+            dispatch("load_all").then(foo => resolve(r));
           })
           .catch(e => reject(e));
       });
     },
     drop({ dispatch }, item_id) {
       return new Promise((resolve, reject) => {
-        appApi.users.drop(item).then(r => {
+        appApi.users.drop(item_id).then(r => {
           dispatch("load_all").then(() => resolve(r));
         });
       });
